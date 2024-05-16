@@ -1,0 +1,5 @@
+
+
+# Ignore .txt and .pdb files
+*.txt
+*.pdb
