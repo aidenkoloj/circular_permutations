@@ -24,8 +24,18 @@ pdb_head -1000000000 "$1" > temp.pdb
 # Use pdbtools to select only one chain 
 pdb_selchain -A temp.pdb  > temp2.pdb
 
+# This if statement block deals with the situation in which there is no chain listed in the pdb file. In this case, temp2 would be empty so we should use the first temp.pdb to create the cleanup.pdb
+if [ -s "temp2.pdb" ]; then
+    echo "File is not empty"
+    grep '^ATOM' temp2.pdb > "$(basename "$1" .pdb)_cleanup.pdb"
+else
+    echo "File is empty"
+    grep '^ATOM' temp.pdb > "$(basename "$1" .pdb)_cleanup.pdb"
+fi
+
+
 # Extract lines only beginning with ATOM.
-grep '^ATOM' temp2.pdb > "$(basename "$1" .pdb)_cleanup.pdb"
+#grep '^ATOM' temp2.pdb > "$(basename "$1" .pdb)_cleanup.pdb"
 rm temp.pdb
 rm temp2.pdb
 echo "Done."
