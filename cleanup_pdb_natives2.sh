@@ -24,15 +24,21 @@ for file in *.pdb; do
 
     # Use pdbtools to select only one chain 
         pdb_selchain -A temp.pdb  > temp2.pdb
-
-    # Extract lines only beginning with ATOM.
-        grep '^ATOM' temp2.pdb > "$output_dir/$(basename "$file" .pdb)_cleanup.pdb"
-    
+    # This if statement block deals with the situation in which there is no chain listed in the pdb file. In this case, temp2 would be empty so we should use the first temp.pdb to create the cleanup.pdb
+        if [ -s "temp2.pdb" ]; then
+            echo "File is not empty"
+            #grep '^ATOM' temp2.pdb > "$(basename "$file" .pdb)_cleanup.pdb"
+            grep '^ATOM' temp2.pdb > "$output_file"
+        else
+            echo "File is empty"
+            #grep '^ATOM' temp.pdb > "$(basename "$file" .pdb)_cleanup.pdb"
+            grep '^ATOM' temp.pdb > "$output_file"
+        fi
     # Cleanup temporary files
-        rm temp.pdb
-        rm temp2.pdb
+    rm temp.pdb
+    rm temp2.pdb
 
-        echo "Cleanup completed for $file"
+    echo "Cleanup completed for $file"
     fi
 done
 
