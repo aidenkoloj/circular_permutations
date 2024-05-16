@@ -15,21 +15,25 @@ for file in *.pdb; do
         echo "Error: File '$file' does not exist or is not a regular file."
         continue
     fi
-    
+    output_file="$output_dir/$(basename "$file" .pdb)_cleanup.pdb"
+    if [ -e "$output_file" ]; then
+        echo "Output file already exists: $output_file"
+    else
     # Use pdbtools to clean up some of the file
-    pdb_head -1000000000 "$file" > temp.pdb
+        pdb_head -1000000000 "$file" > temp.pdb
 
     # Use pdbtools to select only one chain 
-    pdb_selchain -A temp.pdb  > temp2.pdb
+        pdb_selchain -A temp.pdb  > temp2.pdb
 
     # Extract lines only beginning with ATOM.
-    grep '^ATOM' temp2.pdb > "$output_dir/$(basename "$file" .pdb)_cleanup.pdb"
+        grep '^ATOM' temp2.pdb > "$output_dir/$(basename "$file" .pdb)_cleanup.pdb"
     
     # Cleanup temporary files
-    rm temp.pdb
-    rm temp2.pdb
+        rm temp.pdb
+        rm temp2.pdb
 
-    echo "Cleanup completed for $file"
+        echo "Cleanup completed for $file"
+    fi
 done
 
 echo "All cleanup operations completed."
